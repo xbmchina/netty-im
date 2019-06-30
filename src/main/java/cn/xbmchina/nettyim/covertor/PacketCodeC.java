@@ -1,7 +1,6 @@
 package cn.xbmchina.nettyim.covertor;
 
-import cn.xbmchina.nettyim.domain.Packet;
-import cn.xbmchina.nettyim.domain.UserPacket;
+import cn.xbmchina.nettyim.protocol.*;
 import cn.xbmchina.nettyim.serialize.JSONSerializer;
 import cn.xbmchina.nettyim.serialize.Serializer;
 import io.netty.buffer.ByteBuf;
@@ -9,45 +8,40 @@ import io.netty.buffer.ByteBufAllocator;
 import java.util.HashMap;
 import java.util.Map;
 
-import static cn.xbmchina.nettyim.domain.Command.LOGIN_REQUEST;
+import static cn.xbmchina.nettyim.protocol.Command.*;
 
 public class PacketCodeC {
-
     private static final int MAGIC_NUMBER = 0x12345678;
-    private static final Map<Byte, Class<? extends Packet>> packetTypeMap;
-    private static final Map<Byte, Serializer> serializerMap;
     public static final PacketCodeC INSTANCE = new PacketCodeC();
 
-    private PacketCodeC() {
-    }
+    private final Map<Byte, Class<? extends Packet>> packetTypeMap;
+    private final Map<Byte, Serializer> serializerMap;
 
-    static {
+
+    private PacketCodeC() {
         packetTypeMap = new HashMap<>();
         packetTypeMap.put(LOGIN_REQUEST, UserPacket.class);
+        packetTypeMap.put(LOGIN_RESPONSE, ResponsePacket.class);
+        packetTypeMap.put(MESSAGE_REQUEST, MessageRequestPacket.class);
+        packetTypeMap.put(MESSAGE_RESPONSE, MessageResponsePacket.class);
 
         serializerMap = new HashMap<>();
         Serializer serializer = new JSONSerializer();
         serializerMap.put(serializer.getSerializerAlogrithm(), serializer);
     }
 
-
-    public ByteBuf encode(ByteBufAllocator byteBufAllocator, Packet packet) {
-        // 1. 创建 ByteBuf 对象
-        ByteBuf byteBuf = byteBufAllocator.ioBuffer();
-        // 2. 序列化 java 对象
+    public void encode(ByteBuf byteBuf, Packet packet) {
+        // 1. 序列化 java 对象
         byte[] bytes = Serializer.DEFAULT.serialize(packet);
 
-        // 3. 实际编码过程
+        // 2. 实际编码过程
         byteBuf.writeInt(MAGIC_NUMBER);
         byteBuf.writeByte(packet.getVersion());
         byteBuf.writeByte(Serializer.DEFAULT.getSerializerAlogrithm());
         byteBuf.writeByte(packet.getCommand());
         byteBuf.writeInt(bytes.length);
         byteBuf.writeBytes(bytes);
-
-        return byteBuf;
     }
-
 
 
     public Packet decode(ByteBuf byteBuf) {

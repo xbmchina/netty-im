@@ -1,8 +1,8 @@
-package cn.xbmchina.nettyim.domain;
+package cn.xbmchina.nettyim.protocol;
 
 import lombok.Data;
 
-import static cn.xbmchina.nettyim.domain.Command.LOGIN_RESPONSE;
+import static cn.xbmchina.nettyim.protocol.Command.LOGIN_RESPONSE;
 
 @Data
 public class ResponsePacket extends Packet {

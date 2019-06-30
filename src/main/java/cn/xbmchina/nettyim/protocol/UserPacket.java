@@ -1,8 +1,8 @@
-package cn.xbmchina.nettyim.domain;
+package cn.xbmchina.nettyim.protocol;
 
 import lombok.Data;
 
-import static cn.xbmchina.nettyim.domain.Command.LOGIN_REQUEST;
+import static cn.xbmchina.nettyim.protocol.Command.LOGIN_REQUEST;
 @Data
 public class UserPacket extends Packet {
     private String userId;

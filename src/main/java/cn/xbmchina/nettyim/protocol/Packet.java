@@ -1,4 +1,4 @@
-package cn.xbmchina.nettyim.domain;
+package cn.xbmchina.nettyim.protocol;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
